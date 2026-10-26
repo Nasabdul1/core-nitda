@@ -292,6 +292,22 @@ section{padding-block:clamp(80px,11vw,140px)}
 .mail span{overflow:hidden;text-overflow:ellipsis;user-select:all}
 .mail button{background:rgba(236,245,239,.08);color:var(--deep-fg);border:0;border-radius:999px;padding:6px 12px;font:600 12px var(--f-body);cursor:pointer;transition:background .2s}
 .mail button:hover{background:rgba(236,245,239,.16)}
+/* live demo */
+.demo{background:var(--deep);color:var(--deep-fg);position:relative;overflow:hidden;isolation:isolate}
+.demo::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(50% 50% at 50% 0%,rgba(155,232,189,.18),transparent 70%)}
+.demo .sec-head h2{color:var(--deep-fg)}
+.demo .lede{color:var(--deep-muted)}
+.demo-top{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.demo-top .sec-head{margin:0}
+.frame{border-radius:18px;overflow:hidden;border:1px solid rgba(236,245,239,.18);box-shadow:0 40px 100px -30px rgba(0,0,0,.6),0 0 80px -30px rgba(155,232,189,.3);background:var(--surface)}
+.frame-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--deep-2);font-size:12px;color:var(--deep-muted)}
+.frame-bar .url{flex:1;min-width:0;background:rgba(236,245,239,.06);border-radius:8px;padding:5px 12px;font-family:var(--f-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frame-bar a{color:var(--mint);text-decoration:none;font-weight:600;white-space:nowrap}
+.frame iframe{display:block;width:100%;height:min(820px,82vh);border:0;background:var(--bg)}
+.hints{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.hints div{border:1px solid var(--deep-line);border-radius:14px;padding:16px 18px;font-size:14px;color:var(--deep-muted)}
+.hints b{display:block;color:var(--deep-fg);font-weight:600;margin-bottom:2px}
+@media (max-width:760px){.hints{grid-template-columns:1fr}.frame iframe{height:640px}}
 footer{background:var(--deep);color:var(--deep-muted);border-top:1px solid var(--deep-line);padding-block:28px calc(28px + env(safe-area-inset-bottom,0px));font-size:13px}
 footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 </style>
@@ -306,8 +322,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <a class="lk" href="#problem">Problem</a>
     <a class="lk" href="#how">How it works</a>
     <a class="lk" href="#impact">Impact</a>
+    <a class="lk" href="#demo">Try it</a>
     <a class="lk" href="#roadmap">Roadmap</a>
-    <a class="btn btn-mint" href="prototype/">Live prototype <span class="arr">→</span></a>
+    <a class="btn btn-mint" href="#demo">Live prototype <span class="arr">→</span></a>
   </div>
 </nav>
 
@@ -320,7 +337,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       </h1>
       <p class="lede fade" style="--d:.65s">CORE (Compliance Oversight &amp; Regulatory Enforcement) tracks NDPA, GAID and CAR compliance for every organisation NITDA regulates. It flags missed deadlines the day they happen and gives enforcement officers a ranked list of who to act on first.</p>
       <div class="cta-row fade" style="--d:.8s">
-        <a class="btn btn-mint" href="prototype/">Open the live prototype <span class="arr">→</span></a>
+        <a class="btn btn-mint" href="#demo">Try the live prototype <span class="arr">→</span></a>
         <a class="btn btn-ghost" href="#how">See how it works</a>
       </div>
     </div>
@@ -445,6 +462,24 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <div class="toggle" id="tog" data-s="after" role="group" aria-label="Compare"><span class="thumb"></span><button type="button" data-v="before" aria-pressed="false">Before CORE</button><button type="button" data-v="after" aria-pressed="true">With CORE</button></div>
     </div>
     <div class="ba-list" id="ba" data-s="after"></div>
+  </div>
+</section>
+
+<section class="demo" id="demo">
+  <div class="wrap gut">
+    <div class="demo-top rv">
+      <div class="sec-head"><span class="eyebrow" style="color:var(--mint)">Try it live</span><h2>The working prototype, right here.</h2><p class="lede">This is the real CORE dashboard running on 42 example entities. Click around: open an entity, log an enforcement action, and watch it land in the audit trail.</p></div>
+      <a class="btn btn-mint" href="prototype/">Open full screen <span class="arr">→</span></a>
+    </div>
+    <div class="frame rv">
+      <div class="frame-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">core · compliance console</span><a href="prototype/">Full screen ↗</a></div>
+      <iframe src="prototype/" title="CORE prototype dashboard" loading="lazy"></iframe>
+    </div>
+    <div class="hints">
+      <div><b>Overview</b>Agency-wide status by sector, zone and obligation.</div>
+      <div><b>Enforcement queue</b>Risk-ranked list with one-click actions.</div>
+      <div><b>Audit trail</b>Every action, timestamped with the officer's name.</div>
+    </div>
   </div>
 </section>
 
