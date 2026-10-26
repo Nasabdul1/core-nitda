@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>CORE for NITDA</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: floating pill nav over a deep-green hero with a tilted live product window; light sections scroll beneath with scroll-linked reveals, a sticky module walkthrough, and a dark closing band */
+:root{
+  --bg:#f5f8f5; --surface:#ffffff; --sunk:#eaf0eb; --line:#dbe4dd;
+  --ink:#0a1d15; --muted:#56685e; --faint:#8b9a91;
+  --green:#00804c; --green-ink:#006b3f; --mint:#9be8bd;
+  --deep:#052519; --deep-2:#0a3626; --deep-fg:#ecf5ef; --deep-muted:#93b5a3; --deep-line:rgba(236,245,239,.12);
+  --ok:#1f8a4c; --ok-s:#dcf2e4; --due:#b5781a; --due-s:#f7ebd2; --over:#d0581c; --over-s:#fbe2d4; --non:#c3262e; --non-s:#f8dbdc;
+  --shadow:0 1px 2px rgba(5,37,25,.06),0 12px 40px -12px rgba(5,37,25,.18);
+  --f-display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --f-body:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.2,.7,.1,1);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#07120d; --surface:#0d1b14; --sunk:#0a1711; --line:#1d3027;
+  --ink:#e6efe9; --muted:#9db1a5; --faint:#6b8075; --green:#2fbf7a; --green-ink:#5fd99b; --mint:#9be8bd;
+  --deep:#041a11; --deep-2:#082a1d;
+  --ok:#47b878; --ok-s:#143222; --due:#e2a744; --due-s:#372b12; --over:#f0824b; --over-s:#3a2114; --non:#f0646b; --non-s:#3b191b;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 40px -12px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#07120d; --surface:#0d1b14; --sunk:#0a1711; --line:#1d3027;
+  --ink:#e6efe9; --muted:#9db1a5; --faint:#6b8075; --green:#2fbf7a; --green-ink:#5fd99b; --mint:#9be8bd;
+  --deep:#041a11; --deep-2:#082a1d;
+  --ok:#47b878; --ok-s:#143222; --due:#e2a744; --due-s:#372b12; --over:#f0824b; --over-s:#3a2114; --non:#f0646b; --non-s:#3b191b;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 40px -12px rgba(0,0,0,.6); color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--deep)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--green);outline-offset:3px;border-radius:6px}
+.gut{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.025em;line-height:1.02}
+h2{font-size:clamp(34px,5.2vw,60px);font-weight:700}
+h3{font-size:22px;font-weight:600;letter-spacing:-.015em;line-height:1.15}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-ink);display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:18px;height:1px;background:currentColor}
+.lede{font-size:clamp(17px,1.6vw,19px);color:var(--muted);max-width:58ch}
+section{padding-block:clamp(80px,11vw,140px)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:15px;text-decoration:none;border-radius:999px;padding:13px 22px;border:1px solid transparent;transition:transform .35s var(--ease),background .25s,box-shadow .35s var(--ease);will-change:transform}
+.btn .arr{transition:transform .35s var(--ease)}
+.btn:hover .arr{transform:translateX(4px)}
+.btn-mint{background:var(--mint);color:#052519}
+.btn-mint:hover{box-shadow:0 10px 30px -8px rgba(155,232,189,.55)}
+.btn-ghost{border-color:var(--deep-line);color:var(--deep-fg);background:rgba(236,245,239,.04)}
+.btn-ghost:hover{background:rgba(236,245,239,.1)}
+.btn-ink{background:var(--ink);color:var(--bg)}
+
+/* nav */
+.nav{position:fixed;top:calc(env(safe-area-inset-top,0px) + 14px);left:0;right:0;z-index:50;display:flex;justify-content:center;pointer-events:none}
+.nav-in{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:6px 6px 6px 18px;border-radius:999px;background:rgba(5,37,25,.62);border:1px solid var(--deep-line);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);color:var(--deep-fg);box-shadow:0 8px 30px -10px rgba(0,0,0,.4);transition:background .4s,transform .5s var(--ease);max-width:calc(100% - 32px)}
+.nav.scrolled .nav-in{background:rgba(5,37,25,.86)}
+.logo{font-family:var(--f-display);font-weight:800;letter-spacing:.14em;font-size:15px;text-decoration:none;display:flex;align-items:center;gap:8px;margin-right:10px}
+.logo i{width:9px;height:9px;border-radius:2px;background:var(--mint);box-shadow:0 0 12px var(--mint)}
+.nav a.lk{font-size:14px;text-decoration:none;color:var(--deep-muted);padding:8px 12px;border-radius:999px;transition:color .2s,background .2s;white-space:nowrap}
+.nav a.lk:hover{color:var(--deep-fg);background:rgba(236,245,239,.07)}
+.nav .btn{padding:9px 16px;font-size:14px}
+@media (max-width:760px){.nav a.lk{display:none}}
+
+/* hero */
+.hero{background:var(--deep);color:var(--deep-fg);position:relative;overflow:hidden;padding-block:calc(env(safe-area-inset-top,0px) + 150px) 0;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:
+  radial-gradient(60% 50% at 50% 0%,rgba(155,232,189,.22),transparent 70%),
+  radial-gradient(40% 40% at 85% 60%,rgba(0,128,76,.35),transparent 70%),
+  radial-gradient(35% 35% at 10% 70%,rgba(0,128,76,.25),transparent 70%)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background-image:linear-gradient(var(--deep-line) 1px,transparent 1px),linear-gradient(90deg,var(--deep-line) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(70% 60% at 50% 20%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(70% 60% at 50% 20%,#000 20%,transparent 75%)}
+.hero-copy{text-align:center;display:grid;justify-items:center;gap:26px}
+.badge{display:inline-flex;align-items:center;gap:10px;font-size:13px;color:var(--deep-muted);padding:6px 14px 6px 6px;border:1px solid var(--deep-line);border-radius:999px;background:rgba(236,245,239,.04)}
+.badge b{background:rgba(155,232,189,.14);color:var(--mint);font-weight:600;font-size:12px;padding:3px 10px;border-radius:999px}
+.hero h1{font-size:clamp(46px,8.6vw,112px);font-weight:700;letter-spacing:-.045em;line-height:.95;max-width:12ch}
+.hero h1 .w{display:inline-block}
+.hero h1 em{font-style:normal;color:var(--mint)}
+.hero .lede{color:var(--deep-muted);text-align:center}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+@media (prefers-reduced-motion:no-preference){
+  .hero h1 .w{animation:rise 1s var(--ease) both;animation-delay:calc(var(--i)*70ms + 100ms)}
+  .hero .fade{animation:rise 1s var(--ease) both;animation-delay:var(--d,.5s)}
+  @keyframes rise{from{opacity:0;transform:translateY(28px);filter:blur(8px)}}
+}
+
+/* product window */
+.stage{perspective:1600px;margin-top:72px;padding-bottom:0}
+.win{max-width:1060px;margin:0 auto;background:var(--surface);color:var(--ink);border-radius:18px 18px 0 0;border:1px solid rgba(236,245,239,.18);border-bottom:0;box-shadow:0 -20px 80px -20px rgba(155,232,189,.25),0 40px 100px -30px rgba(0,0,0,.6);transform-origin:50% 100%;transform:rotateX(var(--tilt,18deg)) scale(var(--sc,.94));transition:transform .1s linear;overflow:hidden}
+@media (prefers-reduced-motion:no-preference){.win{animation:winIn 1.4s var(--ease) .55s both}@keyframes winIn{from{opacity:0;transform:rotateX(32deg) translateY(80px) scale(.9)}}}
+.win-bar{display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--deep-2);color:var(--deep-fg);font-size:13px}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:rgba(236,245,239,.2)}
+.win-bar b{font-family:var(--f-display);letter-spacing:.12em}
+.win-bar .tb{display:flex;gap:4px;margin-left:8px}
+.win-bar .tb span{padding:4px 10px;border-radius:6px;color:var(--deep-muted);font-size:12px}
+.win-bar .tb span.on{background:rgba(236,245,239,.1);color:var(--deep-fg)}
+.win-bar .live{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mint);font-family:var(--f-mono)}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--mint);animation:pulse 1.8s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.win-body{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:18px}
+.k{border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.k small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.k strong{display:block;font-family:var(--f-display);font-size:34px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
+.k span{font-size:12px;color:var(--muted)}
+.k.ok{box-shadow:inset 0 3px 0 var(--ok)}.k.due{box-shadow:inset 0 3px 0 var(--due)}.k.en{box-shadow:inset 0 3px 0 var(--non)}
+.win-list{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.wl-h{display:flex;justify-content:space-between;padding:10px 14px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line);font-weight:600}
+.wl-r{display:grid;grid-template-columns:minmax(0,1.6fr) 110px minmax(0,1fr) 120px;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-size:13px}
+.wl-r:last-child{border-bottom:0}
+.wl-r .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wl-r .id{font-family:var(--f-mono);font-size:11px;color:var(--faint)}
+.wl-r .dd{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.rk{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.rk .b{width:54px;height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
+.rk .b i{display:block;height:100%;transition:width .8s var(--ease),background .4s}
+.rk b{font-family:var(--f-mono);font-size:12px;width:22px;text-align:right}
+@media (max-width:760px){.win-body{grid-template-columns:repeat(2,minmax(0,1fr))}.wl-r{grid-template-columns:minmax(0,1fr) auto}.wl-r .dd,.wl-r .rk{display:none}}
+
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px 3px 8px;border-radius:999px;white-space:nowrap;transition:background .4s,color .4s}
+.pill::before{content:"";width:7px;height:7px;border-radius:2px;background:currentColor}
+.p-ok{color:var(--ok);background:var(--ok-s)}
+.p-due{color:var(--due);background:var(--due-s)}.p-due::before{border-radius:50%}
+.p-over{color:var(--over);background:var(--over-s)}.p-over::before{transform:rotate(45deg)}
+.p-non{color:var(--non);background:var(--non-s)}.p-non::before{clip-path:polygon(50% 0,100% 100%,0 100%);border-radius:0}
+.flash{animation:flash 1.2s var(--ease)}
+@keyframes flash{0%{background:rgba(155,232,189,.35)}100%{background:transparent}}
+
+/* marquee */
+.marq{background:var(--deep);color:var(--deep-muted);border-top:1px solid var(--deep-line);overflow:hidden;padding-block:18px;position:relative}
+.marq-t{display:flex;gap:48px;width:max-content;font-family:var(--f-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.marq-t span{display:inline-flex;align-items:center;gap:48px}
+.marq-t span::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+@media (prefers-reduced-motion:no-preference){.marq-t{animation:marq 40s linear infinite}@keyframes marq{to{transform:translateX(-50%)}}}
+
+/* scroll reveal (scroll-driven, never hidden at rest outside the viewport flow) */
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion:no-preference){
+    .rv{animation:rv linear both;animation-timeline:view();animation-range:entry 0% cover 28%}
+    @keyframes rv{from{opacity:.2;transform:translateY(48px) scale(.98)}}
+  }
+}
+
+/* problem */
+.sec-head{display:grid;gap:18px;margin-bottom:56px;max-width:760px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:980px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.cards{grid-template-columns:1fr}}
+.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px 24px 28px;display:grid;gap:12px;align-content:start;overflow:hidden;transition:transform .5s var(--ease),border-color .3s}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(0,128,76,.12),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+.card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--green) 40%,var(--line))}
+.card:hover::before{opacity:1}
+.card p{color:var(--muted);font-size:15px}
+.ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--sunk);color:var(--green-ink)}
+.ico svg{width:20px;height:20px}
+
+/* statement */
+.stmt{background:var(--surface);border-block:1px solid var(--line)}
+.stmt p.big{font-family:var(--f-display);font-weight:600;font-size:clamp(30px,4.6vw,56px);line-height:1.12;letter-spacing:-.03em;max-width:22ch}
+.stmt .wd{transition:opacity .25s,color .25s;opacity:var(--o,.22)}
+.stmt .wd.hl{color:var(--green-ink)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:72px;border-top:1px solid var(--line)}
+.stat{padding:28px 24px 0 0;display:grid;gap:6px}
+.stat+.stat{padding-left:24px;border-left:1px solid var(--line)}
+.stat strong{font-family:var(--f-display);font-size:clamp(44px,6vw,76px);font-weight:700;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:15px;max-width:30ch}
+@media (max-width:700px){.stats{grid-template-columns:1fr}.stat+.stat{padding-left:0;border-left:0;border-top:1px solid var(--line);margin-top:24px}}
+
+/* modules */
+.mods{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:64px;align-items:start}
+.mods-side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 110px);display:grid;gap:22px}
+.rail{display:grid;gap:4px;margin-top:12px}
+.rail a{display:grid;grid-template-columns:36px 1fr;align-items:center;gap:8px;text-decoration:none;color:var(--faint);padding:10px 0;border-top:1px solid var(--line);font-weight:500;transition:color .3s}
+.rail a b{font-family:var(--f-mono);font-size:12px;font-weight:500}
+.rail a.on{color:var(--ink)}
+.rail a.on b{color:var(--green-ink)}
+.prog{height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+.prog i{display:block;height:100%;width:var(--p,0%);background:var(--green);transition:width .15s linear}
+.steps{display:grid;gap:22px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:28px;display:grid;gap:22px;transition:border-color .4s,box-shadow .5s var(--ease)}
+.step.on{border-color:color-mix(in srgb,var(--green) 45%,var(--line));box-shadow:var(--shadow)}
+.step .n{font-family:var(--f-mono);font-size:12px;color:var(--green-ink);letter-spacing:.1em}
+.step p{color:var(--muted)}
+.viz{background:var(--sunk);border-radius:14px;padding:18px;min-height:200px;display:grid;align-content:center;gap:10px;overflow:hidden}
+@media (max-width:900px){.mods{grid-template-columns:1fr;gap:32px}.mods-side{position:static}.rail{display:none}}
+
+/* viz: registry */
+.reg-r{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px}
+.reg-r .tag{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--muted)}
+.reg-r .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reg-r.new{border-style:dashed;color:var(--green-ink)}
+/* viz: deadline */
+.dl{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+.ring{width:120px;height:120px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring .c strong{font-family:var(--f-display);font-size:34px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.ring .c span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.calc{font-family:var(--f-mono);font-size:13px;display:grid;gap:6px;min-width:0}
+.calc div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.calc div:last-child{border:0;font-weight:500;color:var(--ink)}
+.calc span{color:var(--muted)}
+@media (max-width:460px){.dl{grid-template-columns:1fr;justify-items:center}.calc{width:100%}}
+/* viz: flag scale */
+.scale{position:relative;padding-top:34px}
+.bands{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;height:44px;border-radius:10px;overflow:hidden;gap:3px}
+.bands div{display:grid;place-items:center;font-size:12px;font-weight:600;text-align:center;line-height:1.1;padding:0 4px}
+.scale .lbl{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-top:8px;text-align:center}
+.mk{position:absolute;top:0;left:var(--x,10%);transform:translateX(-50%);display:grid;justify-items:center;gap:2px;transition:left 1.4s var(--ease)}
+.mk span{font-family:var(--f-mono);font-size:11px;background:var(--ink);color:var(--bg);padding:2px 7px;border-radius:5px;white-space:nowrap}
+.mk i{width:2px;height:52px;background:var(--ink)}
+/* viz: queue */
+.q-r{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px}
+.gauge{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;font-weight:500;position:relative}
+.gauge::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--surface)}
+.gauge b{position:relative;z-index:1;font-weight:500}
+.q-r .nm{font-weight:600}
+.q-r small{display:block;color:var(--muted);font-size:12px}
+.act{font-size:12px;font-weight:600;color:var(--green-ink);border:1px solid color-mix(in srgb,var(--green) 40%,var(--line));padding:5px 10px;border-radius:999px;white-space:nowrap}
+
+/* before/after */
+.ba-top{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:40px}
+.toggle{display:inline-flex;background:var(--sunk);border:1px solid var(--line);border-radius:999px;padding:4px;position:relative}
+.toggle button{position:relative;z-index:1;background:none;border:0;padding:10px 20px;font:inherit;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;border-radius:999px;transition:color .3s}
+.toggle button[aria-pressed="true"]{color:var(--ink)}
+.toggle .thumb{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:var(--surface);box-shadow:var(--shadow);transition:transform .5s var(--ease)}
+.toggle[data-s="after"] .thumb{transform:translateX(100%)}
+.ba-list{display:grid;gap:0;border-top:1px solid var(--line)}
+.ba-r{display:grid;grid-template-columns:60px minmax(0,1fr) auto;gap:20px;align-items:center;padding:22px 0;border-bottom:1px solid var(--line)}
+.ba-r .ix{font-family:var(--f-mono);font-size:12px;color:var(--faint)}
+.ba-r .tx{font-family:var(--f-display);font-size:clamp(20px,2.6vw,30px);font-weight:600;letter-spacing:-.02em;line-height:1.15;transition:opacity .35s,transform .5s var(--ease),filter .35s}
+.ba-r .st{font-size:13px;font-weight:600;padding:5px 12px;border-radius:999px;white-space:nowrap}
+.ba-list.swap .tx{opacity:0;transform:translateY(10px);filter:blur(4px)}
+.ba-list[data-s="before"] .st{color:var(--non);background:var(--non-s)}
+.ba-list[data-s="after"] .st{color:var(--ok);background:var(--ok-s)}
+@media (max-width:560px){.ba-r{grid-template-columns:1fr;gap:8px}.ba-r .st{justify-self:start}}
+
+/* srap */
+.srap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:56px;align-items:start}
+.pillar{background:var(--deep);color:var(--deep-fg);border-radius:24px;padding:36px;display:grid;gap:18px;position:relative;overflow:hidden}
+.pillar::before{content:"";position:absolute;width:340px;height:340px;right:-120px;top:-120px;border-radius:50%;background:radial-gradient(circle,rgba(155,232,189,.25),transparent 70%)}
+.pillar .big{font-family:var(--f-display);font-size:clamp(90px,12vw,150px);font-weight:800;letter-spacing:-.06em;line-height:.85;color:var(--mint)}
+.pillar p{color:var(--deep-muted)}
+.pillar h3{font-size:26px}
+.al{display:grid;gap:0}
+.al div{padding:26px 0;border-top:1px solid var(--line);display:grid;gap:8px}
+.al div:last-child{border-bottom:1px solid var(--line)}
+.al p{color:var(--muted)}
+@media (max-width:900px){.srap{grid-template-columns:1fr}}
+
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;position:relative;margin-top:16px}
+.road-line{grid-column:1/-1;height:2px;background:var(--line);position:relative;margin:0 0 28px;border-radius:2px}
+.road-line i{position:absolute;left:0;top:0;bottom:0;width:var(--rp,33%);background:var(--green);border-radius:2px;transition:width 1.4s var(--ease)}
+.road-line b{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--line);transform:translate(-50%,-50%)}
+.road-line b.done{background:var(--green);border-color:var(--green);box-shadow:0 0 0 6px color-mix(in srgb,var(--green) 18%,transparent)}
+.ph{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;display:grid;gap:14px;align-content:start}
+.ph .when{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.ph .tag{justify-self:start;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--sunk);color:var(--muted)}
+.ph .tag.done{background:var(--ok-s);color:var(--ok)}
+.ph ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:15px}
+.ph li{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start}
+.ph li::before{content:"";width:14px;height:14px;margin-top:4px;border-radius:4px;border:1.5px solid var(--line)}
+.ph.cur li::before{background:var(--green);border-color:var(--green);mask:none;box-shadow:inset 0 0 0 3px var(--surface)}
+@media (max-width:860px){.road{grid-template-columns:1fr}.road-line{display:none}}
+
+/* closing */
+.close{background:var(--deep);color:var(--deep-fg);position:relative;overflow:hidden;isolation:isolate}
+.close::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(50% 60% at 50% 100%,rgba(155,232,189,.22),transparent 70%)}
+.close h2{font-size:clamp(52px,10vw,132px);letter-spacing:-.05em}
+.close h2 em{font-style:normal;color:var(--mint)}
+.asks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:56px}
+.ask{border:1px solid var(--deep-line);border-radius:18px;padding:22px;display:grid;gap:10px;background:rgba(236,245,239,.03);transition:background .3s,transform .5s var(--ease)}
+.ask:hover{background:rgba(236,245,239,.07);transform:translateY(-3px)}
+.ask b{font-family:var(--f-mono);font-size:12px;color:var(--mint);font-weight:500}
+.ask p{font-size:17px;font-weight:500}
+@media (max-width:760px){.asks{grid-template-columns:1fr}}
+.contact{margin-top:56px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.mail{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--deep-line);border-radius:999px;padding:6px 6px 6px 16px;font-family:var(--f-mono);font-size:14px;max-width:100%}
+.mail span{overflow:hidden;text-overflow:ellipsis;user-select:all}
+.mail button{background:rgba(236,245,239,.08);color:var(--deep-fg);border:0;border-radius:999px;padding:6px 12px;font:600 12px var(--f-body);cursor:pointer;transition:background .2s}
+.mail button:hover{background:rgba(236,245,239,.16)}
+footer{background:var(--deep);color:var(--deep-muted);border-top:1px solid var(--deep-line);padding-block:28px calc(28px + env(safe-area-inset-bottom,0px));font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+<meta name="description" content="CORE: Compliance Oversight &amp; Regulatory Enforcement, a proposal to the NITDA Innovation Challenge 2.0.">
+</head>
+<body>
+
+
+<nav class="nav" id="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="logo" href="#top"><i></i>CORE</a>
+    <a class="lk" href="#problem">Problem</a>
+    <a class="lk" href="#how">How it works</a>
+    <a class="lk" href="#impact">Impact</a>
+    <a class="lk" href="#roadmap">Roadmap</a>
+    <a class="btn btn-mint" href="prototype/">Live prototype <span class="arr">→</span></a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap gut">
+    <div class="hero-copy">
+      <span class="badge fade" style="--d:0s"><b>Innovation Challenge 2.0</b>Idea2Impact Programme · 2026</span>
+      <h1 aria-label="Every entity. Every deadline. One live view.">
+        <span class="w" style="--i:0">Every</span> <span class="w" style="--i:1">entity.</span> <span class="w" style="--i:2">Every</span> <span class="w" style="--i:3">deadline.</span> <em><span class="w" style="--i:4">One</span> <span class="w" style="--i:5">live</span> <span class="w" style="--i:6">view.</span></em>
+      </h1>
+      <p class="lede fade" style="--d:.65s">CORE (Compliance Oversight &amp; Regulatory Enforcement) tracks NDPA, GAID and CAR compliance for every organisation NITDA regulates. It flags missed deadlines the day they happen and gives enforcement officers a ranked list of who to act on first.</p>
+      <div class="cta-row fade" style="--d:.8s">
+        <a class="btn btn-mint" href="prototype/">Open the live prototype <span class="arr">→</span></a>
+        <a class="btn btn-ghost" href="#how">See how it works</a>
+      </div>
+    </div>
+  </div>
+  <div class="stage gut">
+    <div class="win" id="win" aria-label="CORE dashboard preview with example data">
+      <div class="win-bar"><span class="dots"><i></i><i></i><i></i></span><b>CORE</b>
+        <span class="tb"><span class="on">Overview</span><span>Registry</span><span>Enforcement</span></span>
+        <span class="live"><i></i>auto-flagging</span></div>
+      <div class="win-body">
+        <div class="k"><small>Entities</small><strong data-count="42">42</strong><span>under oversight</span></div>
+        <div class="k ok"><small>Compliant</small><strong id="kOk">18</strong><span>on schedule</span></div>
+        <div class="k due"><small>Due soon</small><strong id="kDue">11</strong><span>within 14 days</span></div>
+        <div class="k en"><small>Enforcement</small><strong id="kEn">13</strong><span>overdue or non-compliant</span></div>
+        <div class="win-list">
+          <div class="wl-h"><span>Enforcement queue · ranked by risk</span><span class="mono">example data</span></div>
+          <div id="rows"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="marq" aria-hidden="true"><div class="marq-t">
+  <span>NDPA 2023</span><span>GAID 2025</span><span>Compliance Audit Returns</span><span>SRAP 2.0 · Pillar 3</span><span>Risk-ranked enforcement</span><span>Timestamped audit trail</span><span>Auto-flagging engine</span>
+  <span>NDPA 2023</span><span>GAID 2025</span><span>Compliance Audit Returns</span><span>SRAP 2.0 · Pillar 3</span><span>Risk-ranked enforcement</span><span>Timestamped audit trail</span><span>Auto-flagging engine</span>
+</div></div>
+
+<main>
+<section id="problem">
+  <div class="wrap gut">
+    <div class="sec-head rv">
+      <span class="eyebrow">The problem today</span>
+      <h2>Compliance for thousands of entities, tracked by hand.</h2>
+      <p class="lede">NITDA enforces data protection and digital compliance across Nigeria's digital economy. Internally, much of that tracking still runs on spreadsheets, email threads and ad hoc reviews.</p>
+    </div>
+    <div class="cards">
+      <article class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><h3>Manual tracking</h3><p>Records for regulated entities live in spreadsheets and inboxes, maintained one update at a time.</p></article>
+      <article class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><path d="M4 4l16 16"/></svg></span><h3>No live visibility</h3><p>Leadership cannot see who is compliant, due or overdue at any given moment.</p></article>
+      <article class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><h3>Enforcement gaps</h3><p>Missed deadlines surface only at the next manual review, often weeks too late.</p></article>
+      <article class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h6"/></svg></span><h3>No prioritisation</h3><p>Without a risk score, officers have no standard way to decide who to chase first.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="stmt">
+  <div class="wrap gut">
+    <span class="eyebrow" style="margin-bottom:28px">Why it matters</span>
+    <p class="big" id="stmt">NITDA cannot credibly enforce digital compliance on Nigeria's technology sector while managing that same enforcement manually.</p>
+    <div class="stats">
+      <div class="stat rv"><strong>0%</strong><span>real-time visibility into agency-wide compliance status today</span></div>
+      <div class="stat rv"><strong>1,000s</strong><span>regulated entities, growing every year with the digital economy</span></div>
+      <div class="stat rv"><strong>₦bn</strong><span>in potential penalties at risk when enforcement deadlines slip</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap gut mods">
+    <div class="mods-side">
+      <span class="eyebrow">How CORE works</span>
+      <h2>Four modules. One closed loop.</h2>
+      <p class="lede">Entities are registered, deadlines calculate themselves, the flagging engine runs continuously, and officers work from a ranked queue.</p>
+      <div class="prog"><i id="prog"></i></div>
+      <div class="rail" id="rail">
+        <a href="#m1" data-m="m1"><b>01</b>Entity registry</a>
+        <a href="#m2" data-m="m2"><b>02</b>Deadline tracker</a>
+        <a href="#m3" data-m="m3"><b>03</b>Auto-flagging engine</a>
+        <a href="#m4" data-m="m4"><b>04</b>Enforcement queue</a>
+      </div>
+    </div>
+    <div class="steps" id="steps">
+      <article class="step" id="m1">
+        <span class="n">01 · ENTITY REGISTRY</span>
+        <h3>One register for every regulated entity.</h3>
+        <p>Name, sector, state, registration date, data-subject tier and obligation type (NDPA, GAID or CAR) in a single searchable record.</p>
+        <div class="viz">
+          <div class="reg-r"><span class="nm">Kudi Ledger Ltd</span><span class="tag">CAR</span><span class="tag">UHL</span></div>
+          <div class="reg-r"><span class="nm">Arewa Health Systems</span><span class="tag">GAID</span><span class="tag">EHL</span></div>
+          <div class="reg-r"><span class="nm">Savannah Telecoms</span><span class="tag">NDPA</span><span class="tag">UHL</span></div>
+          <div class="reg-r new"><span class="nm">+ Register entity</span><span class="tag">NITDA-1043</span><span></span></div>
+        </div>
+      </article>
+      <article class="step" id="m2">
+        <span class="n">02 · DEADLINE TRACKER</span>
+        <h3>Deadlines that calculate themselves.</h3>
+        <p>CORE works out each entity's next filing date from its last submission and counts down the days. Nobody types a deadline in by hand.</p>
+        <div class="viz"><div class="dl">
+          <div class="ring"><svg width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="8"/><circle id="ringArc" cx="60" cy="60" r="52" fill="none" stroke="var(--due)" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="315"/></svg>
+            <div class="c"><div><strong id="ringN">12</strong><br><span>days left</span></div></div></div>
+          <div class="calc"><div><span>Last CAR filing</span>02 Nov 2025</div><div><span>Cycle</span>+ 12 months</div><div><span>Next deadline</span>02 Nov 2026</div></div>
+        </div></div>
+      </article>
+      <article class="step" id="m3">
+        <span class="n">03 · AUTO-FLAGGING ENGINE</span>
+        <h3>Status changes the day a deadline does.</h3>
+        <p>Every entity is classed in real time. When it crosses a threshold, CORE raises an escalation alert to the responsible officer.</p>
+        <div class="viz"><div class="scale" id="scale">
+          <div class="mk" id="mk"><span id="mkT">T-20 days</span><i></i></div>
+          <div class="bands"><div style="background:var(--ok-s);color:var(--ok)">Compliant</div><div style="background:var(--due-s);color:var(--due)">Due soon</div><div style="background:var(--over-s);color:var(--over)">Overdue</div><div style="background:var(--non-s);color:var(--non)">Non-compliant</div></div>
+          <div class="lbl"><span>&gt; 14 days</span><span>0–14 days</span><span>1–30 days late</span><span>&gt; 30 days late</span></div>
+        </div></div>
+      </article>
+      <article class="step" id="m4">
+        <span class="n">04 · ENFORCEMENT QUEUE</span>
+        <h3>The highest risk sits at the top.</h3>
+        <p>A 0–100 risk score weighs days overdue, data-subject tier, sector sensitivity, prior violations and unanswered notices. Every action taken is logged with officer and timestamp.</p>
+        <div class="viz">
+          <div class="q-r"><span class="gauge" style="background:conic-gradient(var(--non) 338deg,var(--line) 0)"><b>94</b></span><span><span class="nm">Kudi Ledger Ltd</span><small>74 days overdue · 2 notices unanswered</small></span><span class="act">Refer for sanction</span></div>
+          <div class="q-r"><span class="gauge" style="background:conic-gradient(var(--non) 284deg,var(--line) 0)"><b>79</b></span><span><span class="nm">Benue Valley Coop. Bank</span><small>88 days overdue</small></span><span class="act">Schedule audit</span></div>
+          <div class="q-r"><span class="gauge" style="background:conic-gradient(var(--due) 155deg,var(--line) 0)"><b>43</b></span><span><span class="nm">Lagoon Pay Ltd</span><small>22 days overdue</small></span><span class="act">Issue notice</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="impact" style="padding-top:0">
+  <div class="wrap gut">
+    <div class="ba-top rv">
+      <div class="sec-head" style="margin:0"><span class="eyebrow">What changes</span><h2>From inbox archaeology to evidence on demand.</h2></div>
+      <div class="toggle" id="tog" data-s="after" role="group" aria-label="Compare"><span class="thumb"></span><button type="button" data-v="before" aria-pressed="false">Before CORE</button><button type="button" data-v="after" aria-pressed="true">With CORE</button></div>
+    </div>
+    <div class="ba-list" id="ba" data-s="after"></div>
+  </div>
+</section>
+
+<section style="background:var(--surface);border-block:1px solid var(--line)">
+  <div class="wrap gut srap">
+    <div class="pillar rv">
+      <span class="eyebrow" style="color:var(--mint)">Aligned with SRAP 2.0</span>
+      <div class="big">03</div>
+      <h3>Pillar 3: Strengthen policy implementation &amp; legal framework</h3>
+      <p>CORE turns NITDA's regulatory mandates into an automated, evidence-backed enforcement system, in step with the agency's AI Transformation Roadmap.</p>
+    </div>
+    <div class="al">
+      <div class="rv"><h3>Closes the enforcement gap</h3><p>No entity slips through undetected. NDPA, GAID and CAR mandates are checked continuously, not at the next review.</p></div>
+      <div class="rv"><h3>Strengthens legal standing</h3><p>A complete, timestamped audit trail makes every enforcement decision documented, consistent and defensible in a dispute.</p></div>
+      <div class="rv"><h3>Enables evidence-based regulation</h3><p>Leadership sees compliance by sector, region and severity today, instead of in a report from three months ago.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="wrap gut">
+    <div class="sec-head rv"><span class="eyebrow">Roadmap to deployment</span><h2>Prototype to agency-wide in three phases.</h2><p class="lede">The architecture is modular, so each phase can be scoped and funded on its own.</p></div>
+    <div class="road" id="road">
+      <div class="road-line"><i></i><b class="done" style="left:16.66%"></b><b style="left:50%"></b><b style="left:83.33%"></b></div>
+      <div class="ph cur rv"><span class="tag done">Built</span><h3>Phase 1 · Prototype</h3><span class="when">Now · challenge stage</span>
+        <ul><li>Working dashboard</li><li>Mock data for 40+ entities</li><li>Overview, registry and enforcement views</li><li>Risk scoring and enforcement queue</li></ul></div>
+      <div class="ph rv"><span class="tag">Next</span><h3>Phase 2 · Pilot</h3><span class="when">Months 1–3 after the challenge</span>
+        <ul><li>Real NITDA data integration</li><li>Live deadline tracking</li><li>User accounts for officers</li><li>Enforcement action logging</li></ul></div>
+      <div class="ph rv"><span class="tag">Then</span><h3>Phase 3 · Full deployment</h3><span class="when">Months 4–12</span>
+        <ul><li>All MDAs and regulated entities</li><li>Verification links to NIN, CAC and IPPIS</li><li>Automatic report generation</li><li>AI-based risk prediction</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="close">
+  <div class="wrap gut">
+    <span class="eyebrow" style="color:var(--mint)">The ask</span>
+    <h2 style="margin-top:20px">CORE is <em>ready.</em></h2>
+    <p class="lede" style="color:var(--deep-muted);margin-top:22px">The enforcement gap is real and the prototype is built. The next step is putting it to work inside NITDA.</p>
+    <div class="asks">
+      <div class="ask rv"><b>01</b><p>Select CORE for the next challenge stage</p></div>
+      <div class="ask rv"><b>02</b><p>Commission a pilot within one NITDA department</p></div>
+      <div class="ask rv"><b>03</b><p>Fund Phase 2 development and real data integration</p></div>
+    </div>
+    <div class="contact">
+      <a class="btn btn-mint" href="prototype/">Open the live prototype <span class="arr">→</span></a>
+      <span class="mail"><span>mmahmud@nitda.gov.ng</span><button type="button" data-copy="mmahmud@nitda.gov.ng">Copy</button></span>
+      <span class="mail"><span>ykabiru@nitda.gov.ng</span><button type="button" data-copy="ykabiru@nitda.gov.ng">Copy</button></span>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap gut"><span>CORE · Compliance Oversight &amp; Regulatory Enforcement</span><span>A proposal to the NITDA Innovation Challenge 2.0. Entities shown are fictional examples.</span></div></footer>
+
+<script>
+(function(){
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $=s=>document.querySelector(s);
+
+/* nav state */
+const nav=$("#nav");
+/* hero window tilt flattens as you scroll */
+const win=$("#win");
+function onScroll(){
+  const y=scrollY;
+  nav.classList.toggle("scrolled",y>40);
+  if(!reduce){const p=Math.min(1,y/420);win.style.setProperty("--tilt",(18*(1-p))+"deg");win.style.setProperty("--sc",(.94+.06*p))}
+  stmtUpdate();progUpdate();
+}
+addEventListener("scroll",onScroll,{passive:true});
+
+/* live queue in the hero window */
+const P={ok:["p-ok","Compliant"],due:["p-due","Due soon"],over:["p-over","Overdue"],non:["p-non","Non-compliant"]};
+const rc=r=>r>=75?"var(--non)":r>=50?"var(--over)":r>=30?"var(--due)":"var(--ok)";
+const rows=[
+  {n:"Kudi Ledger Ltd",id:"NITDA-1001",s:"non",d:"74d overdue",r:94},
+  {n:"Benue Valley Cooperative Bank",id:"NITDA-1012",s:"non",d:"88d overdue",r:79},
+  {n:"Arewa Health Systems",id:"NITDA-1002",s:"non",d:"61d overdue",r:77},
+  {n:"Lagoon Pay Ltd",id:"NITDA-1003",s:"over",d:"22d overdue",r:43},
+  {n:"Sahel Payments Switch",id:"NITDA-1018",s:"due",d:"6d left",r:28}
+];
+const box=$("#rows");
+function draw(flashIdx){
+  box.innerHTML=rows.map((x,i)=>`<div class="wl-r${i===flashIdx?" flash":""}"><span style="min-width:0"><div class="nm">${x.n}</div><div class="id">${x.id}</div></span><span><span class="pill ${P[x.s][0]}">${P[x.s][1]}</span></span><span class="dd">${x.d}</span><span class="rk"><span class="b"><i style="width:${x.r}%;background:${rc(x.r)}"></i></span><b>${x.r}</b></span></div>`).join("");
+}
+draw(-1);
+let tick=0;
+const script=[
+  ()=>{rows[4]={n:"Sahel Payments Switch",id:"NITDA-1018",s:"over",d:"1d overdue",r:52};return 4},
+  ()=>{rows.sort((a,b)=>b.r-a.r);return rows.findIndex(x=>x.id==="NITDA-1018")},
+  ()=>{const i=rows.findIndex(x=>x.id==="NITDA-1003");rows[i]=Object.assign({},rows[i],{s:"ok",d:"filing received",r:12});return i},
+  ()=>{rows.sort((a,b)=>b.r-a.r);return rows.length-1},
+  ()=>{rows.splice(0,rows.length,
+    {n:"Kudi Ledger Ltd",id:"NITDA-1001",s:"non",d:"74d overdue",r:94},
+    {n:"Benue Valley Cooperative Bank",id:"NITDA-1012",s:"non",d:"88d overdue",r:79},
+    {n:"Arewa Health Systems",id:"NITDA-1002",s:"non",d:"61d overdue",r:77},
+    {n:"Lagoon Pay Ltd",id:"NITDA-1003",s:"over",d:"22d overdue",r:43},
+    {n:"Sahel Payments Switch",id:"NITDA-1018",s:"due",d:"6d left",r:28});return -1}
+];
+const kpi=[[18,11,13],[18,10,14],[18,10,14],[19,10,13],[19,10,13]];
+if(!reduce)setInterval(()=>{if(document.hidden)return;const i=script[tick%script.length]();const k=kpi[tick%kpi.length];$("#kOk").textContent=k[0];$("#kDue").textContent=k[1];$("#kEn").textContent=k[2];draw(i);tick++},2600);
+
+/* statement word highlight */
+const st=$("#stmt");
+st.innerHTML=st.textContent.split(" ").map(w=>`<span class="wd${/manually|credibly/.test(w)?" hl":""}">${w}</span>`).join(" ");
+const words=[...st.querySelectorAll(".wd")];
+function stmtUpdate(){
+  if(reduce){words.forEach(w=>w.style.setProperty("--o",1));return}
+  const r=st.getBoundingClientRect(),vh=innerHeight;
+  const p=Math.max(0,Math.min(1,(vh*.85-r.top)/(r.height+vh*.35)));
+  const n=p*words.length*1.15;
+  words.forEach((w,i)=>w.style.setProperty("--o",Math.max(.22,Math.min(1,n-i))));
+}
+
+/* modules: active step + progress */
+const steps=[...document.querySelectorAll(".step")];
+const rail=[...document.querySelectorAll("#rail a")];
+function progUpdate(){
+  const c=$("#steps").getBoundingClientRect(),vh=innerHeight;
+  const p=Math.max(0,Math.min(1,(vh*.5-c.top)/c.height));
+  $("#prog").style.setProperty("--p",(p*100)+"%");
+  let act=steps[0].id;
+  steps.forEach(s=>{if(s.getBoundingClientRect().top<vh*.55)act=s.id});
+  steps.forEach(s=>s.classList.toggle("on",s.id===act));
+  rail.forEach(a=>a.classList.toggle("on",a.dataset.m===act));
+}
+
+/* deadline ring countdown */
+let rn=12;const arc=$("#ringArc"),rN=$("#ringN");
+function ring(){const f=rn/365;arc.setAttribute("stroke-dashoffset",326.7*(1-Math.max(.03,f*8)));rN.textContent=rn;arc.setAttribute("stroke",rn>14?"var(--ok)":"var(--due)")}
+ring();
+
+/* flag marker sweep */
+const pos=[{x:12,t:"T-20 days"},{x:37,t:"T-6 days"},{x:62,t:"12 days late"},{x:88,t:"41 days late"}];
+let pi=0;const mk=$("#mk"),mkT=$("#mkT");
+if(!reduce)setInterval(()=>{if(document.hidden)return;pi=(pi+1)%pos.length;mk.style.setProperty("--x",pos[pi].x+"%");mkT.textContent=pos[pi].t;rn=rn<=1?12:rn-1;ring()},1800);
+
+/* card spotlight */
+document.querySelectorAll(".card").forEach(c=>c.addEventListener("pointermove",e=>{const r=c.getBoundingClientRect();c.style.setProperty("--mx",(e.clientX-r.left)+"px");c.style.setProperty("--my",(e.clientY-r.top)+"px")}));
+
+/* magnetic buttons */
+if(!reduce&&matchMedia("(pointer:fine)").matches)document.querySelectorAll(".btn").forEach(b=>{
+  b.addEventListener("pointermove",e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.18}px,${(e.clientY-r.top-r.height/2)*.25}px)`});
+  b.addEventListener("pointerleave",()=>b.style.transform="");
+});
+
+/* before / after */
+const BA=[
+  ["Compliance tracked in spreadsheets and email threads","One digital registry holding every entity"],
+  ["Leadership has no live view of status","Live dashboard by sector, region and severity"],
+  ["Missed deadlines found by chance","Automatic flag the day a deadline passes"],
+  ["No standard way to prioritise enforcement","Risk-ranked queue tells officers who to act on first"],
+  ["Audit trail scattered across inboxes","Timestamped record of every action taken"]
+];
+const ba=$("#ba"),tog=$("#tog");
+function drawBA(s){ba.innerHTML=BA.map((r,i)=>`<div class="ba-r"><span class="ix">0${i+1}</span><span class="tx">${s==="before"?r[0]:r[1]}</span><span class="st">${s==="before"?"Today":"With CORE"}</span></div>`).join("");ba.dataset.s=s}
+drawBA("after");
+tog.addEventListener("click",e=>{const b=e.target.closest("button");if(!b||tog.dataset.s===b.dataset.v)return;const s=b.dataset.v;tog.dataset.s=s;
+  tog.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  if(reduce){drawBA(s);return}
+  ba.classList.add("swap");setTimeout(()=>{drawBA(s);requestAnimationFrame(()=>ba.classList.remove("swap"))},300)});
+
+/* copy email */
+document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>{
+  const v=b.dataset.copy;const done=()=>{b.textContent="Copied";setTimeout(()=>b.textContent="Copy",1600)};
+  try{navigator.clipboard.writeText(v).then(done,()=>{sel(b);})}catch(e){sel(b)}
+}));
+function sel(b){const s=b.previousElementSibling;const r=document.createRange();r.selectNodeContents(s);const g=getSelection();g.removeAllRanges();g.addRange(r);b.textContent="Selected"}
+
+/* hero KPI count-up */
+if(!reduce)document.querySelectorAll("[data-count],#kOk,#kDue,#kEn").forEach(el=>{const to=+el.textContent;let t0=null;const run=t=>{t0=t0||t;const p=Math.min(1,(t-t0)/1400);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(run)};setTimeout(()=>requestAnimationFrame(run),900)});
+
+onScroll();
+})();
+</script>
+
+</body>
+</html>
